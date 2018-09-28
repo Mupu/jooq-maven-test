@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
+    <groupId>test</groupId>
+    <artifactId>testo</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq</artifactId>
+            <version>${jooq.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-meta</artifactId>
+            <version>${jooq.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-codegen</artifactId>
+            <version>${jooq.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <!-- Specify the maven code generator plugin -->
+                <groupId>org.jooq</groupId>
+                <artifactId>jooq-codegen-maven</artifactId>
+                <version>${jooq.version}</version>
+
+                <!-- The plugin should hook into the generate goal -->
+                <executions>
+                    <execution>
+                        <id>jooq-codegen</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+                <!-- Specify the plugin configuration.
+                     The configuration format is the same as for the standalone code generator -->
+                <configuration>
+
+                    <!-- JDBC connection parameters -->
+                    <jdbc>
+                        <driver>${jdbc.driver}</driver>
+                        <url>${jdbc.url}</url>
+                        <user>${jdbc.user}</user>
+                        <password>${jdbc.password}</password>
+                    </jdbc>
+
+                    <!-- Generator parameters -->
+                    <generator>
+                        <database>
+                            <name>org.jooq.meta.mysql.MySQLDatabase</name>
+                            <includes>.*</includes>
+                            <excludes></excludes>
+                            <!-- In case your database supports catalogs, e.g. SQL Server:
+                            <inputCatalog>public</inputCatalog>
+                              -->
+                            <inputSchema>meetnow</inputSchema>
+                        </database>
+                        <target>
+                            <directory>src/main/java/generated-sources/</directory>
+                        </target>
+                    </generator>
+                </configuration>
+            </plugin>
+            <plugin>
+                <!--GENERATE SYSTEM PROPERTIES FOR CODE-->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.5.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <systemProperties>
+                        <systemProperty>
+                            <key>jdbc.driver</key>
+                            <value>${jdbc.driver}</value>
+                        </systemProperty>
+                        <systemProperty>
+                            <key>jdbc.user</key>
+                            <value>${jdbc.user}</value>
+                        </systemProperty>
+                        <systemProperty>
+                            <key>jdbc.password</key>
+                            <value>${jdbc.password}</value>
+                        </systemProperty>
+                        <systemProperty>
+                            <key>jdbc.url</key>
+                            <value>${jdbc.url}</value>
+                        </systemProperty>
+                    </systemProperties>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdbc.user>mupu</jdbc.user>
+                <jdbc.password>mupu</jdbc.password>
+                <jdbc.url>jdbc:mysql://192.168.2.119:3306/${database.name}?serverTimezone=UTC</jdbc.url>
+                <database.name>meetnow</database.name>
+                <jooq.version>3.11.5</jooq.version>
+                <mysql.version>8.0.12</mysql.version>
+                <jdbc.driver>com.mysql.cj.jdbc.Driver</jdbc.driver>
+            </properties>
+        </profile>
+    </profiles>
+</project>
