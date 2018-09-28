@@ -77,7 +77,7 @@
                             <!-- In case your database supports catalogs, e.g. SQL Server:
                             <inputCatalog>public</inputCatalog>
                               -->
-                            <inputSchema>meetnow</inputSchema>
+                            <inputSchema>${database.name}</inputSchema>
                         </database>
                         <target>
                             <directory>src/main/java/generated-sources/</directory>
